@@ -1,7 +1,8 @@
 import mongoose from 'mongoose'
-import { IActivity } from '../../interfaces/global'
-import { reactionSchema } from './reactionSchema'
-import { commentSchema } from './commentSchema'
+import { IActivity } from '../interfaces/global'
+import { reactionSchema } from './Reaction'
+import { commentSchema } from './Comment'
+
 const activitySchema = new mongoose.Schema<IActivity>({
   id: mongoose.Types.ObjectId,
   timeCreated: String,
@@ -16,4 +17,5 @@ const activitySchema = new mongoose.Schema<IActivity>({
   comment: { type: commentSchema, required: false }
 })
 const Activity = mongoose.model<IActivity>('activities', activitySchema)
+
 export { Activity, activitySchema }

@@ -1,6 +1,14 @@
-import { IReaction, IPost } from './Post'
+import { IPost } from './Post'
 import { IUser } from './User'
 
+interface IReaction {
+  id: string
+  timeCreated: string
+  icon: string
+  label: string
+  owner: IUser
+  reactedToEntity: IPost | IComment
+}
 interface IReport {
   id: string
   timeCreated: string
@@ -29,4 +37,4 @@ interface IActivity {
   comment?: IComment
 }
 
-export { IReport, IComment, IActivity }
+export { IReport, IComment, IActivity, IReaction }

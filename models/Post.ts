@@ -1,8 +1,8 @@
 import mongoose from 'mongoose'
-import { IPost } from '../../interfaces/Post'
-import { reactionSchema } from './reactionSchema'
-import { reportSchema } from './reportSchema'
-import { commentSchema } from './commentSchema'
+import { IPost } from '../interfaces/Post'
+import { reactionSchema } from './Reaction'
+import { reportSchema } from './Report'
+import { commentSchema } from './Comment'
 const postSchema = new mongoose.Schema<IPost>({
   id: mongoose.Types.ObjectId,
   timeCreated: String,

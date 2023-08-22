@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { IReaction } from '../../interfaces/Post'
+import { IReaction } from '../interfaces/Post'
 const reactionSchema = new mongoose.Schema<IReaction>({
   id: mongoose.Types.ObjectId,
   timeCreated: String,

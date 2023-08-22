@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { IComment } from '../../interfaces/global'
+import { IComment } from '../interfaces/global'
 const commentSchema = new mongoose.Schema<IComment>({
   id: mongoose.Types.ObjectId,
   timeCreated: String,

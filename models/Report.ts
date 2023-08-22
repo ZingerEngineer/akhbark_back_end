@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { IReport } from '../../interfaces/global'
+import { IReport } from '../interfaces/global'
 const reportSchema = new mongoose.Schema<IReport>({
   id: mongoose.Types.ObjectId,
   timeCreated: String,

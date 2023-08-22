@@ -1,11 +1,11 @@
 import mongoose from 'mongoose'
-import { IUser } from '../../interfaces/User'
-import { followerSchema } from '../schemas/followerSchema'
-import { postSchema } from '../schemas/postSchema'
-import { activitySchema } from './activitySchema'
-import { reportSchema } from './reportSchema'
-import { commentSchema } from './commentSchema'
-import { reactionSchema } from './reactionSchema'
+import { IUser } from '../interfaces/User'
+import { followerSchema } from './Follower'
+import { postSchema } from './Post'
+import { activitySchema } from './Activity'
+import { reportSchema } from './Report'
+import { commentSchema } from './Comment'
+import { reactionSchema } from './Reaction'
 const userSchema = new mongoose.Schema<IUser>({
   id: mongoose.Types.ObjectId,
   timeCreated: String,

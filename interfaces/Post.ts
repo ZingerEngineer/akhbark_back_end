@@ -1,14 +1,5 @@
 import { IUser } from './User'
-import { IReport, IComment } from './global'
-
-interface IReaction {
-  id: string
-  timeCreated: string
-  icon: string
-  label: string
-  owner: IUser
-  reactedToEntity: IPost | IComment
-}
+import { IReport, IReaction } from './global'
 
 interface IPost {
   id: string
