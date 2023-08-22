@@ -1,12 +1,22 @@
-import { IPost } from './Post.js'
-import { IActivity } from './global.js'
+import { IPost, IReaction } from './Post.js'
+import { IActivity, IComment, IReport } from './global.js'
 
 type IFollower = Omit<
   IUser,
-  'email' | 'password' | 'followers' | 'posts' | 'recentActivity' | 'role'
+  | 'email'
+  | 'password'
+  | 'followers'
+  | 'posts'
+  | 'recentActivity'
+  | 'role'
+  | 'timeCreated'
+  | 'reports'
+  | 'comments'
+  | 'reactions'
 >
 interface IUser {
   id: string
+  timeCreated: string
   role: string
   userName: string
   email: string
@@ -21,5 +31,8 @@ interface IUser {
     postsArray: IPost[]
   }
   recentActivity: IActivity[]
+  reports: IReport[]
+  comments: IComment[]
+  reactions: IReaction[]
 }
 export { IUser, IFollower }

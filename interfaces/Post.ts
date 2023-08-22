@@ -1,21 +1,26 @@
 import { IUser } from './User'
-import { IReport } from './global'
+import { IReport, IComment } from './global'
 
-interface Iinteraction {
+interface IReaction {
+  id: string
+  timeCreated: string
   icon: string
   label: string
+  owner: IUser
+  reactedToEntity: IPost | IComment
 }
 
 interface IPost {
-  owner: IUser
   id: string
+  timeCreated: string
+  owner: IUser
   title: string
   image: string
   video: string
   privacy: string
-  interactions: {
+  reactions: {
     totalNumber: number
-    interactionTypes: Iinteraction[]
+    reactionTypes: IReaction[]
   }
   reportStatus: {
     reportsNumber: number
@@ -24,4 +29,4 @@ interface IPost {
   comments: Comment[]
 }
 
-export { IReport, Iinteraction, IPost }
+export { IReport, IReaction, IPost }

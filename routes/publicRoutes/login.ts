@@ -12,5 +12,9 @@ password: '******we246' *bcrypted*
 //
 import express from 'express'
 import { Request, Response, NextFunction } from 'express'
+import mongoose from 'mongoose'
+import { userSchema } from '../../db/schemas/userSchema'
 const login = express.Router()
-login.post('/login', (req: Request, res: Response, next: NextFunction) => {})
+login.post('/login', (req: Request, res: Response, next: NextFunction) => {
+  mongoose.model(req.body.userName, userSchema)
+})

@@ -1,23 +1,28 @@
 import mongoose from 'mongoose'
 import { IPost } from '../../interfaces/Post'
-import Follower from '../schemas/followerSchema'
-import User from './userSchema'
+import { reactionSchema } from './reactionSchema'
+import { reportSchema } from './reportSchema'
+import { commentSchema } from './commentSchema'
 const postSchema = new mongoose.Schema<IPost>({
-  owner: User,
-  id: String,
+  id: mongoose.Types.ObjectId,
+  timeCreated: String,
+  owner: {
+    userName: String,
+    userId: mongoose.Types.ObjectId
+  },
   title: String,
   image: String,
   video: String,
   privacy: String,
-  interactions: {
+  reactions: {
     totalNumber: Number,
-    interactionTypes: [Interaction]
+    ReactionTypes: { type: [reactionSchema] }
   },
   reportStatus: {
-    reportsNumber: Number
-    reportsArray: [Report]
+    reportsNumber: Number,
+    reportsArray: { type: [reportSchema] }
   },
-  comments: [Comment]
+  comments: { type: [commentSchema] }
 })
-const Post = mongoose.model<IPost>('user', postSchema)
-export default Post
+const Post = mongoose.model<IPost>('posts', postSchema)
+export { Post, postSchema }

@@ -1,8 +1,14 @@
 import mongoose from 'mongoose'
 import { IUser } from '../../interfaces/User'
-import Follower from '../schemas/followerSchema'
+import { followerSchema } from '../schemas/followerSchema'
+import { postSchema } from '../schemas/postSchema'
+import { activitySchema } from './activitySchema'
+import { reportSchema } from './reportSchema'
+import { commentSchema } from './commentSchema'
+import { reactionSchema } from './reactionSchema'
 const userSchema = new mongoose.Schema<IUser>({
-  id: String,
+  id: mongoose.Types.ObjectId,
+  timeCreated: String,
   role: String,
   userName: String,
   email: String,
@@ -10,13 +16,16 @@ const userSchema = new mongoose.Schema<IUser>({
   avatar: String,
   followers: {
     totalNumber: Number,
-    followersArray: [Follower]
+    followersArray: { type: [followerSchema] }
   },
   posts: {
-    totalNumber: Number
-    postsArray: [Post]
+    totalNumber: Number,
+    postsArray: [postSchema]
   },
-  recentActivity: [Activity]
+  recentActivity: [activitySchema],
+  reports: [reportSchema],
+  comments: [commentSchema],
+  reactions: [reactionSchema]
 })
-const User = mongoose.model<IUser>('user', userSchema)
-export default User
+const User = mongoose.model<IUser>('users', userSchema)
+export { User, userSchema }
