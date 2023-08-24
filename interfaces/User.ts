@@ -13,26 +13,28 @@ type IFollower = Omit<
   | 'reports'
   | 'comments'
   | 'reactions'
+  | 'token'
 >
 interface IUser {
-  id: string
-  timeCreated: string
-  role: string
-  userName: string
+  id?: string
+  timeCreated?: string
+  role?: string
+  token?: string
+  userName?: string
   email: string
   password: string
-  avatar: string
-  followers: {
+  avatar?: string
+  followers?: {
     totalNumber: number
     followersArray: IFollower[]
   }
-  posts: {
+  posts?: {
     totalNumber: number
     postsArray: IPost[]
   }
-  recentActivity: IActivity[]
-  reports: IReport[]
-  comments: IComment[]
-  reactions: IReaction[]
+  recentActivity?: IActivity[]
+  reports?: IReport[]
+  comments?: IComment[]
+  reactions?: IReaction[]
 }
 export { IUser, IFollower }

@@ -2,6 +2,7 @@ import main from './mongoose'
 import express, { Request, Response, NextFunction } from 'express'
 import dotenv from 'dotenv'
 import bodyParser = require('body-parser')
+
 dotenv.config()
 
 const app = express()
@@ -25,4 +26,5 @@ app.get('/user', (req: Request, res: Response, next: NextFunction) => {
 })
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`)
+  // dbConnection()
 })

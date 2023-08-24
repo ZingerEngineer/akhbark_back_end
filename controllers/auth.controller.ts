@@ -6,8 +6,8 @@ export const login = async (req: Request, res: Response) => {
 
   try {
     const { token, userData } = await userLogin(email, password)
-    res.status(200).json({ message: 'success' })
+    res.status(200).json({ message: 'login success.' })
   } catch (error) {
-    res.status(400).json({ message: 'failed' })
+    res.status(400).json({ message: 'login failed.' })
   }
 }

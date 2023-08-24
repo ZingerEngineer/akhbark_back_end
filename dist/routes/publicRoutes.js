@@ -4,9 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const authRouter_1 = require("./authRouter");
 const router = express_1.default.Router();
-//public routes
-router.use('/');
-//
-//private routes
-router.use('/', authorizationMiddleware);
+router.use('/auth', authRouter_1.authRouter);

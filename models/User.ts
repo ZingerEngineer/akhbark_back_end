@@ -8,24 +8,27 @@ import { commentSchema } from './Comment'
 import { reactionSchema } from './Reaction'
 const userSchema = new mongoose.Schema<IUser>({
   id: mongoose.Types.ObjectId,
-  timeCreated: String,
-  role: String,
-  userName: String,
-  email: String,
-  password: String,
-  avatar: String,
+  timeCreated: { type: String, default: new Date(Date.now()).toString() },
+  role: { type: String, default: 'user' },
+  token: { type: String, default: '' },
+  userName: { type: String, default: 'guest' },
+  email: { type: String, required: true },
+  password: { type: String, required: true },
+  avatar: { type: String, default: 'default_user_url' },
   followers: {
-    totalNumber: Number,
-    followersArray: { type: [followerSchema] }
+    type: Object,
+    totalNumber: { type: Number, default: 0 },
+    followersArray: { type: [followerSchema], default: [] }
   },
   posts: {
-    totalNumber: Number,
-    postsArray: [postSchema]
+    type: Object,
+    totalNumber: { type: Number, default: 0 },
+    postsArray: { type: [postSchema], default: [] }
   },
-  recentActivity: [activitySchema],
-  reports: [reportSchema],
-  comments: [commentSchema],
-  reactions: [reactionSchema]
+  recentActivity: { type: [activitySchema], default: [] },
+  reports: { type: [reportSchema], default: [] },
+  comments: { type: [commentSchema], default: [] },
+  reactions: { type: [reactionSchema], default: [] }
 })
 const User = mongoose.model<IUser>('users', userSchema)
 export { User, userSchema }
