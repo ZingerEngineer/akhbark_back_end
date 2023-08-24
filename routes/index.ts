@@ -6,4 +6,4 @@ const router = express.Router()
 router.use('/')
 //
 //private routes
-router.use('/', authorizationMiddleware)
+router.use('/')
