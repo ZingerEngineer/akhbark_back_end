@@ -2,13 +2,16 @@ import mongoose from 'mongoose'
 import { IReport } from '../interfaces/global'
 const reportSchema = new mongoose.Schema<IReport>({
   id: mongoose.Types.ObjectId,
-  timeCreated: String,
+  timeCreated: { type: String, default: new Date(Date.now()).toString() },
   entityReported: {
-    entityId: mongoose.Types.ObjectId
+    type: Object,
+    entityType: String,
+    entityId: mongoose.Types.ObjectId,
+    required: true
   },
   title: String,
-  reasons: [String],
-  reportBody: String
+  reasons: { type: [String], required: true },
+  reportBody: { type: String, default: '', required: false }
 })
 const Report = mongoose.model<IReport>('reports', reportSchema)
 export { Report, reportSchema }

@@ -5,13 +5,18 @@ import { commentSchema } from './Comment'
 
 const activitySchema = new mongoose.Schema<IActivity>({
   id: mongoose.Types.ObjectId,
-  timeCreated: String,
+  timeCreated: { type: String, default: new Date(Date.now()).toString() },
   owner: {
+    type: Object,
     userName: String,
-    userId: mongoose.Types.ObjectId
+    userId: mongoose.Types.ObjectId,
+    required: true
   },
   affectedEntity: {
-    entityId: mongoose.Types.ObjectId
+    type: Object,
+    entityType: String,
+    entityId: mongoose.Types.ObjectId,
+    required: true
   },
   reaction: { type: reactionSchema, required: false },
   comment: { type: commentSchema, required: false }
