@@ -1,13 +1,12 @@
-import main from './mongoose'
-import express, { Request, Response, NextFunction } from 'express'
 import dotenv from 'dotenv'
-import bodyParser = require('body-parser')
-
 dotenv.config()
+import express, { Request, Response, NextFunction } from 'express'
+import bodyParser = require('body-parser')
+import { dbConnection } from './services/dbConnection'
 
 const app = express()
 const port = process.env.PORT
-main()
+
 app.use(bodyParser.json())
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Express + TypeScript Server')
@@ -26,5 +25,5 @@ app.get('/user', (req: Request, res: Response, next: NextFunction) => {
 })
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`)
-  // dbConnection()
+  dbConnection()
 })
