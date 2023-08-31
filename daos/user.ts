@@ -11,7 +11,11 @@ export const findOneUserByEmail = async (email: string) => {
   if (!user) throw new Error("User doesn't exist")
   return user.toObject()
 }
-
+export const findOneUserByToken = async (token: string) => {
+  const user = await User.findOne({ token: token })
+  if (!user) throw new Error("User doesn't exist")
+  return user.toObject()
+}
 export const findOneUserByUserName = async (userName: string) => {
   const user = await User.findOne({ userName: userName })
   if (!user) throw new Error("User doesn't exist")

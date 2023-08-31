@@ -1,5 +1,8 @@
 import express from 'express'
+import userRouter from './userRoutes'
+import authGaurd from '../middlewares/authGaurd'
+const privateRouter = express.Router()
 
-const router = express.Router()
+privateRouter.use('/user', authGaurd, userRouter)
 
-router.use('/auth')
+export default privateRouter

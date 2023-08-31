@@ -1,6 +1,8 @@
 import express from 'express'
 import { authRouter } from './authRouter'
 
-const router = express.Router()
+const publicRouter = express.Router()
 
-router.use('/auth', authRouter)
+publicRouter.use('/auth', authRouter)
+
+export default publicRouter

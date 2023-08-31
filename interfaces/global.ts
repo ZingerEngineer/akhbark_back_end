@@ -36,5 +36,6 @@ interface IActivity {
   reaction?: IReaction
   comment?: IComment
 }
+interface IUserSettings {}
 
-export { IReport, IComment, IActivity, IReaction }
+export { IReport, IComment, IActivity, IReaction, IUserSettings }

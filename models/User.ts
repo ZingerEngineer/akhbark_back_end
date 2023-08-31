@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema<IUser>({
   email: { type: String, required: true },
   password: { type: String, required: true },
   avatar: { type: String, default: 'default_user_url' },
+  coverImage: { type: String, default: '', required: false },
   followers: {
     type: Object,
     totalNumber: { type: Number, default: 0 },
@@ -28,7 +29,8 @@ const userSchema = new mongoose.Schema<IUser>({
   recentActivity: { type: [activitySchema], default: [] },
   reports: { type: [reportSchema], default: [] },
   comments: { type: [commentSchema], default: [] },
-  reactions: { type: [reactionSchema], default: [] }
+  reactions: { type: [reactionSchema], default: [] },
+  settings: { type: Object, default: '' }
 })
 const User = mongoose.model<IUser>('users', userSchema)
 export { User, userSchema }

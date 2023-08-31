@@ -1,5 +1,5 @@
 import { IPost, IReaction } from './Post.js'
-import { IActivity, IComment, IReport } from './global.js'
+import { IActivity, IComment, IReport, IUserSettings } from './global.js'
 
 type IFollower = Omit<
   IUser,
@@ -14,6 +14,8 @@ type IFollower = Omit<
   | 'comments'
   | 'reactions'
   | 'token'
+  | 'settings'
+  | 'coverImage'
 >
 interface IUser {
   id?: string
@@ -24,6 +26,7 @@ interface IUser {
   email: string
   password: string
   avatar?: string
+  coverImage?: string
   followers?: {
     totalNumber: number
     followersArray: IFollower[]
@@ -36,5 +39,6 @@ interface IUser {
   reports?: IReport[]
   comments?: IComment[]
   reactions?: IReaction[]
+  settings?: IUserSettings
 }
 export { IUser, IFollower }
