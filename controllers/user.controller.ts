@@ -5,12 +5,11 @@ import {
   getUserPosts,
   getUserFollowers,
   getUserRecentActivity
-} from '../actions/userActions'
+} from '../actions/user'
 
 export const Profile = async (req: Request, res: Response) => {
-  const { token } = req.headers
-  if (!token) throw new Error('Error happened')
-
+  let token = req.headers.token
+  if (!token || typeof token !== 'string') throw new Error('Error happened')
   try {
     const { userName, email, avatar, coverImage, posts, recentActivity } =
       await getUserProfile(token)
@@ -21,7 +20,8 @@ export const Profile = async (req: Request, res: Response) => {
 }
 
 export const Settings = async (req: Request, res: Response) => {
-  const { token } = req.body
+  let token = req.headers.token
+  if (!token || typeof token !== 'string') throw new Error('Error happened')
   try {
     await getUserSettings(token)
     res.status(200).json({ message: 'user settings loaded successfully' })
@@ -31,7 +31,8 @@ export const Settings = async (req: Request, res: Response) => {
 }
 
 export const Posts = async (req: Request, res: Response) => {
-  const { token } = req.body
+  let token = req.headers.token
+  if (!token || typeof token !== 'string') throw new Error('Error happened')
   try {
     await getUserPosts(token)
     res.status(200).json({ message: 'user posts loaded successfully' })
@@ -41,7 +42,8 @@ export const Posts = async (req: Request, res: Response) => {
 }
 
 export const Followers = async (req: Request, res: Response) => {
-  const { token } = req.body
+  let token = req.headers.token
+  if (!token || typeof token !== 'string') throw new Error('Error happened')
   try {
     await getUserFollowers(token)
     res.status(200).json({ message: 'user followers loaded successfully' })
@@ -51,7 +53,8 @@ export const Followers = async (req: Request, res: Response) => {
 }
 
 export const RecentActivity = async (req: Request, res: Response) => {
-  const { token } = req.body
+  let token = req.headers.token
+  if (!token || typeof token !== 'string') throw new Error('Error happened')
   try {
     await getUserRecentActivity(token)
     res

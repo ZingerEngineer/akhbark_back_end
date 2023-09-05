@@ -10,3 +10,5 @@ router.use('/', publicRouter)
 //
 //private routes
 router.use('/', authGaurd, privateRouter)
+
+export default router

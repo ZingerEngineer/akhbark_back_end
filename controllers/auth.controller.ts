@@ -17,8 +17,11 @@ export const register = async (req: Request, res: Response) => {
 
   try {
     await userRegister(email, password, userName)
-    res.status(200).json({ message: 'register success' })
+    res.status(200).json({ message: 'register success.' })
   } catch (error) {
-    res.status(400).json({ message: 'register failed' })
+    if (error instanceof Error) {
+      res.status(400).json({ message: error.message })
+    }
+    res.status(400).json({ message: 'register failed.' })
   }
 }

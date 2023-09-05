@@ -1,15 +1,14 @@
 import { IUser } from '../interfaces/User'
 import { User } from '../models/User'
 
-export const createUser = (data: IUser) => {
+export const createUser = async (data: IUser) => {
   const user = new User(data)
-  return user.save()
+  return await user.save()
 }
 
 export const findOneUserByEmail = async (email: string) => {
   const user = await User.findOne({ email: email })
-  if (!user) throw new Error("User doesn't exist")
-  return user.toObject()
+  if (user) return user.toObject()
 }
 export const findOneUserByToken = async (token: string) => {
   const user = await User.findOne({ token: token })
@@ -18,8 +17,7 @@ export const findOneUserByToken = async (token: string) => {
 }
 export const findOneUserByUserName = async (userName: string) => {
   const user = await User.findOne({ userName: userName })
-  if (!user) throw new Error("User doesn't exist")
-  return user.toObject()
+  if (user) return user.toObject()
 }
 
 export const getUserPosts = async (userId: string) => {

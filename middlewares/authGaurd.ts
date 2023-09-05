@@ -1,11 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
-import { IUser } from '../interfaces/User'
-const authGaurd =
-  (user: IUser) => (req: Request, res: Response, next: NextFunction) => {
-    const { token } = req.body
+const authGaurd = (req: Request, res: Response, next: NextFunction) => {
+  const token = req.headers.token
 
-    if (token) return next()
-
+  if (!token || typeof token !== 'string')
     return res.status(401).json({ message: 'Unauthorized access' })
-  }
+
+  return next()
+}
 export default authGaurd

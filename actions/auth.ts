@@ -1,4 +1,8 @@
-import { findOneUserByEmail, createUser } from '../daos/user'
+import {
+  findOneUserByEmail,
+  createUser,
+  findOneUserByUserName
+} from '../daos/user'
 import { compare } from 'bcrypt'
 import { sign } from 'jsonwebtoken'
 import { hash } from 'bcrypt'
@@ -22,6 +26,10 @@ export const userRegister = async (
   password: string,
   userName: string
 ) => {
+  const userEmailExists = await findOneUserByEmail(email)
+  if (userEmailExists) throw new Error('Email already exists.')
+  const userNameExists = await findOneUserByUserName(userName)
+  if (userNameExists) throw new Error('User name already used.')
   const hashedPassword = await hash(password, 10)
   createUser({
     userName,
