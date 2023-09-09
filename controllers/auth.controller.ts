@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { userLogin, userRegister } from '../actions/auth'
+import { userLogin, userRegister, sendMail } from '../actions/auth'
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body
@@ -32,5 +32,18 @@ export const register = async (req: Request, res: Response) => {
       res.status(400).json({ message: error.message })
     }
     res.status(400).json({ message: 'register failed.' })
+  }
+}
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  const { email } = req.body
+  try {
+    const info = await sendMail(email)
+    res.status(200).json({ message: 'verification mail sent.', info })
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(400).json({ message: error.message })
+    }
+    res.status(400).json({ message: 'verification failed.' })
   }
 }
