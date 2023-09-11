@@ -47,3 +47,15 @@ export const forgotPassword = async (req: Request, res: Response) => {
     res.status(400).json({ message: 'verification failed.' })
   }
 }
+
+export const createNewPassword = async (req: Request, res: Response) => {
+  const { password } = req.body
+  try {
+    res.status(200).json({ message: 'verification mail sent.' })
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(400).json({ message: error.message })
+    }
+    res.status(400).json({ message: 'verification failed.' })
+  }
+}

@@ -12,5 +12,8 @@ export const userRegisterSchema = object({
 })
 
 export const emailSchema = object({
-  email: string().email().required('email is required.')
+  email: string().email()
+})
+export const passwordSchema = object({
+  email: string().min(8).max(15)
 })
