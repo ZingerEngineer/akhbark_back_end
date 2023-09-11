@@ -14,6 +14,18 @@ describe('Validate Middleware', () => {
     expect(res).toBe(true)
   })
 
+  it('should work', () => {
+    const testSchema = object({
+      email: string().email().required()
+    })
+    const testData = {
+      email: 'ramy@gg.com'
+    }
+    const res = validateFn(testSchema, testData)
+
+    expect(res).toBe(true)
+  })
+
   it('should fail', () => {
     const testSchema = object({
       email: string().required(),
