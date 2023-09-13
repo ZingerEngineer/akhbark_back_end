@@ -3,13 +3,15 @@ import {
   login,
   register,
   forgotPassword,
-  createNewPassword
+  createNewPassword,
+  validateResetPasswordToken
 } from '../controllers/auth.controller'
 import {
   userLoginSchema,
   userRegisterSchema,
   emailSchema,
-  passwordSchema
+  passwordSchema,
+  tokenSchema
 } from '../schemas/User'
 import { validate } from '../middlewares/validate'
 const authRouter = express.Router()
@@ -21,6 +23,11 @@ authRouter.post(
   '/create-new-password',
   validate(passwordSchema),
   createNewPassword
+)
+authRouter.post(
+  '/validate-reset-password-token',
+  validate(tokenSchema),
+  validateResetPasswordToken
 )
 
 export { authRouter }

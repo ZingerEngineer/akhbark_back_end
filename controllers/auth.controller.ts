@@ -1,5 +1,10 @@
 import { Request, Response } from 'express'
-import { userLogin, userRegister, sendMail } from '../actions/auth'
+import {
+  userLogin,
+  userRegister,
+  sendMail,
+  validateResetPasswordTokenFn
+} from '../actions/auth'
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body
@@ -57,5 +62,22 @@ export const createNewPassword = async (req: Request, res: Response) => {
       res.status(400).json({ message: error.message })
     }
     res.status(400).json({ message: 'verification failed.' })
+  }
+}
+
+export const validateResetPasswordToken = async (
+  req: Request,
+  res: Response
+) => {
+  const token = req.body
+  try {
+    validateResetPasswordTokenFn(token)
+    res.status(200).json({ message: 'validation success' })
+  } catch (error) {
+    error instanceof Error
+      ? res
+          .status(400)
+          .json({ message: 'validation failed', reason: error.message })
+      : res.status(400).json({ message: 'validation failed' })
   }
 }

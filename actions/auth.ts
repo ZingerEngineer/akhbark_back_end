@@ -1,14 +1,16 @@
 import {
   findOneUserByEmail,
   createUser,
-  findOneUserByUserName
+  findOneUserByUserName,
+  createUserResetPasswordToken
 } from '../daos/user'
 import { compare } from 'bcrypt'
 import { sign } from 'jsonwebtoken'
 import { hash } from 'bcrypt'
 import nodemailer from 'nodemailer'
+import { IToken } from '../interfaces/global'
 
-const forgotURL = 'http://localhost:3000/forgot-password'
+const forgotURL = 'http://localhost:3000/create-new-password'
 const forgetKey = process.env.PRIVATE_FORGET_KEY
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
@@ -55,17 +57,33 @@ export const userRegister = async (
 export const sendMail = async (email: string) => {
   if (!forgetKey) throw new Error('email sending failed.')
   else {
-    const emailToken = sign({ email: email }, forgetKey, {
+    const emailPayload = {
+      email: email,
+      date: Date.now()
+    }
+    const emailToken = sign(emailPayload, forgetKey, {
       expiresIn: '600000'
     })
-    const forgotURLWithToken = `${forgotURL}/?forgot=${emailToken}`
-
+    const forgotURLWithToken = `${forgotURL}/${emailToken}`
+    await createUserResetPasswordToken(emailToken, email)
     const info = await transporter.sendMail({
       from: 'akhbarkmailer@gmail.com', // sender address
       to: email, // list of receivers
-      subject: 'Hello ✔', // Subject line
+      subject: 'Passowrd Reset', // Subject line
       text: `Use this url to create a new password: ${forgotURLWithToken}` // plain text body
     })
     return info
   }
+}
+
+export const validateResetPasswordTokenFn = async (token: IToken) => {
+  const { owner } = token
+  const userEmail = owner.email
+  const user = await findOneUserByEmail(userEmail)
+  if (!user) throw new Error("User doesn't exist")
+  const userResetPasswordToken = user.tokens?.find(
+    (token) => token.type === 'reset_password_token'
+  )
+  if (!userResetPasswordToken) throw new Error("User doesn't have reset token")
+  return token.body !== userResetPasswordToken?.body ? false : true
 }
