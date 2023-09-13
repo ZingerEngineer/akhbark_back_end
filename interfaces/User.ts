@@ -1,5 +1,11 @@
 import { IPost, IReaction } from './Post.js'
-import { IActivity, IComment, IReport, IUserSettings } from './global.js'
+import {
+  IActivity,
+  IComment,
+  IReport,
+  IUserSettings,
+  IToken
+} from './global.js'
 
 type IFollower = Omit<
   IUser,
@@ -17,11 +23,12 @@ type IFollower = Omit<
   | 'settings'
   | 'coverImage'
 >
+
 interface IUser {
   id?: string
   timeCreated?: string
   role?: string
-  token?: string
+  tokens?: IToken[]
   userName?: string
   email: string
   password: string

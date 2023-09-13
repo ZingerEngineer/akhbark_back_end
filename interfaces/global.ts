@@ -1,6 +1,20 @@
 import { IPost } from './Post'
 import { IUser } from './User'
 
+export enum tokenTypes {
+  authorization_token = 'authorization_token',
+  reset_password_token = 'reset_password_token'
+}
+interface IToken {
+  timeCreated: string
+  owner: {
+    email: string
+    userName?: String
+    userId: string
+  }
+  body: string
+  type: tokenTypes
+}
 interface IReaction {
   id: string
   timeCreated: string
@@ -38,4 +52,4 @@ interface IActivity {
 }
 interface IUserSettings {}
 
-export { IReport, IComment, IActivity, IReaction, IUserSettings }
+export { IReport, IComment, IActivity, IReaction, IUserSettings, IToken }

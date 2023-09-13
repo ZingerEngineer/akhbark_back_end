@@ -6,11 +6,25 @@ import { activitySchema } from './Activity'
 import { reportSchema } from './Report'
 import { commentSchema } from './Comment'
 import { reactionSchema } from './Reaction'
+import { IToken } from '../interfaces/global'
+
+const tokenSchema = new mongoose.Schema<IToken>({
+  timeCreated: { type: String },
+  owner: {
+    type: Object,
+    userName: { type: String },
+    userId: mongoose.Types.ObjectId,
+    required: true
+  },
+  body: { type: String },
+  type: { type: String }
+})
+
 const userSchema = new mongoose.Schema<IUser>({
   id: mongoose.Types.ObjectId,
   timeCreated: { type: String, default: new Date(Date.now()).toString() },
   role: { type: String, default: 'user' },
-  token: { type: String, default: '' },
+  tokens: { type: [tokenSchema], default: [] },
   userName: { type: String, default: 'guest' },
   email: { type: String, required: true },
   password: { type: String, required: true },
@@ -33,4 +47,4 @@ const userSchema = new mongoose.Schema<IUser>({
   settings: { type: Object, default: '' }
 })
 const User = mongoose.model<IUser>('users', userSchema)
-export { User, userSchema }
+export { User, userSchema, tokenSchema }
