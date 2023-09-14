@@ -6,7 +6,10 @@ import { dbConnection } from './services/dbConnection'
 import router from './routes/index'
 import cors from 'cors'
 const corsOptions = {
-  origin: 'http://localhost:3000'
+  origin: '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }
 
 const app = express()
