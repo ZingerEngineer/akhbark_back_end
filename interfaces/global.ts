@@ -2,8 +2,8 @@ import { IPost } from './Post'
 import { IUser } from './User'
 
 export enum tokenTypes {
-  authorization_token = 'authorization_token',
-  reset_password_token = 'reset_password_token'
+  authorization_token,
+  reset_password_token
 }
 interface IToken {
   timeCreated: string

@@ -17,7 +17,7 @@ const tokenSchema = new mongoose.Schema<IToken>({
     required: true
   },
   body: { type: String },
-  type: { type: String }
+  type: { type: Number }
 })
 
 const userSchema = new mongoose.Schema<IUser>({

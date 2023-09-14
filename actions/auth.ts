@@ -8,7 +8,7 @@ import { compare } from 'bcrypt'
 import { sign } from 'jsonwebtoken'
 import { hash } from 'bcrypt'
 import nodemailer from 'nodemailer'
-import { IToken } from '../interfaces/global'
+import { IToken, tokenTypes } from '../interfaces/global'
 
 const forgotURL = 'http://localhost:3000/create-new-password'
 const forgetKey = process.env.PRIVATE_FORGET_KEY
@@ -82,7 +82,7 @@ export const validateResetPasswordTokenFn = async (token: IToken) => {
   const user = await findOneUserByEmail(userEmail)
   if (!user) throw new Error("User doesn't exist")
   const userResetPasswordToken = user.tokens?.find(
-    (token) => token.type === 'reset_password_token'
+    (token) => token.type === tokenTypes.reset_password_token
   )
   if (!userResetPasswordToken) throw new Error("User doesn't have reset token")
   return token.body !== userResetPasswordToken?.body ? false : true

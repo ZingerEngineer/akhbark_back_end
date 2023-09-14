@@ -78,41 +78,20 @@ export const createUserResetPasswordToken = async (
   tokenBody: string,
   userEmail: string
 ) => {
-  const user = await findOneUserDocumentByEmail(userEmail)
-  if (!user) throw new Error("User doesn't exist")
-  user.updateOne(() => {
-    if (!user.tokens) throw new Error('Empty tokens array')
-    const userResetPasswordToken = user.tokens.find(
-      (token) => token.type === 'reset_password_token'
-    )
-    if (!userResetPasswordToken)
-      user.tokens.push({
-        timeCreated: new Date(Date.now()).toString(),
-        owner: {
-          email: user.email,
-          userName: user.userName,
-          userId: user._id.toString()
-        },
-        body: tokenBody,
-        type: tokenTypes.reset_password_token
-      })
-    else {
-      const filteredTokensArray = user.tokens.filter(
-        (token) => token.type !== 'reset_password_token'
-      )
-      user.tokens = filteredTokensArray
-      user.tokens.push({
-        timeCreated: new Date(Date.now()).toString(),
-        owner: {
-          email: user.email,
-          userName: user.userName,
-          userId: user._id.toString()
-        },
-        body: tokenBody,
-        type: tokenTypes.reset_password_token
-      })
-    }
-  })
+  const user = await User.findOne({ email: userEmail })
+  if (!user) throw new Error("user doesn't exist")
+  if (!user.tokens) throw new Error('Empty tokens array')
+  user.tokens[tokenTypes.reset_password_token] = {
+    timeCreated: new Date(Date.now()).toString(),
+    owner: {
+      email: user.email,
+      userName: user.userName,
+      userId: user._id.toString()
+    },
+    body: tokenBody,
+    type: tokenTypes.reset_password_token
+  }
+  return await user.save()
 }
 
 export const getUserResetPasswordToken = async (userId: string) => {
@@ -121,7 +100,7 @@ export const getUserResetPasswordToken = async (userId: string) => {
   const userObject = user.toObject()
   if (!userObject.tokens) throw new Error("User doesn't have tokens")
   const resetPassowrdToken = userObject.tokens.find(
-    (token) => token.type === 'reset_password_token'
+    (token) => token.type === tokenTypes.reset_password_token
   )
   if (!resetPassowrdToken) throw new Error("User doesn't have token")
   return resetPassowrdToken
