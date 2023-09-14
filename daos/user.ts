@@ -94,14 +94,13 @@ export const createUserResetPasswordToken = async (
   return await user.save()
 }
 
-export const getUserResetPasswordToken = async (userId: string) => {
-  const user = await User.findById(userId)
+export const getUserToken = async (userEmail: string, tokenType: string) => {
+  const user = await User.findOne({ email: userEmail })
   if (!user) throw new Error("User doesn't exist")
-  const userObject = user.toObject()
-  if (!userObject.tokens) throw new Error("User doesn't have tokens")
-  const resetPassowrdToken = userObject.tokens.find(
-    (token) => token.type === tokenTypes.reset_password_token
+  if (!user.tokens) throw new Error("User doesn't have tokens")
+  const wantedToken = user.tokens.find(
+    (token) => token.type === tokenTypes[tokenType as keyof typeof tokenTypes]
   )
-  if (!resetPassowrdToken) throw new Error("User doesn't have token")
-  return resetPassowrdToken
+  if (!wantedToken) throw new Error("User doesn't have specified token.")
+  return wantedToken
 }

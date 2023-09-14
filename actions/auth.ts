@@ -2,14 +2,18 @@ import {
   findOneUserByEmail,
   createUser,
   findOneUserByUserName,
-  createUserResetPasswordToken
+  createUserResetPasswordToken,
+  getUserToken
 } from '../daos/user'
 import { compare } from 'bcrypt'
-import { sign } from 'jsonwebtoken'
+import { sign, decode } from 'jsonwebtoken'
 import { hash } from 'bcrypt'
 import nodemailer from 'nodemailer'
 import { IToken, tokenTypes } from '../interfaces/global'
-
+interface tokenData {
+  email: string
+  dateCreated: string
+}
 const forgotURL = 'http://localhost:3000/create-new-password'
 const forgetKey = process.env.PRIVATE_FORGET_KEY
 const transporter = nodemailer.createTransport({
@@ -76,14 +80,14 @@ export const sendMail = async (email: string) => {
   }
 }
 
-export const validateResetPasswordTokenFn = async (token: IToken) => {
-  const { owner } = token
-  const userEmail = owner.email
-  const user = await findOneUserByEmail(userEmail)
-  if (!user) throw new Error("User doesn't exist")
-  const userResetPasswordToken = user.tokens?.find(
-    (token) => token.type === tokenTypes.reset_password_token
-  )
-  if (!userResetPasswordToken) throw new Error("User doesn't have reset token")
-  return token.body !== userResetPasswordToken?.body ? false : true
+export const validateResetPasswordTokenFn = async (token: string) => {
+  const payload = decode(token)
+  if (!payload) throw new Error('empty token')
+  if (typeof payload === 'string') throw new Error('invalid token')
+  const { email } = payload
+  const dbResetToken = await getUserToken(email, 'reset_password_token')
+  if (!dbResetToken) throw new Error("User doesn't have specified token")
+  if (dbResetToken.body !== token)
+    throw new Error('User is not authorized to this page.')
+  return
 }
