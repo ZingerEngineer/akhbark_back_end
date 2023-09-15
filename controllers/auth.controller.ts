@@ -71,17 +71,11 @@ export const validateResetPasswordToken = async (
 ) => {
   const { token } = req.body
   try {
-    const payload = await validateResetPasswordTokenFn(token)
-    res.status(200).json({ message: 'validation success', payload: payload })
+    const isValidReset = await validateResetPasswordTokenFn(token)
+    res
+      .status(200)
+      .json({ message: 'validation success', isValidReset: isValidReset })
   } catch (error) {
-    error instanceof Error
-      ? res
-          .status(400)
-          .json({ message: 'validation failed', reason: error.message })
-          .redirect('http://localhost:3000/login')
-      : res
-          .status(400)
-          .json({ message: 'validation failed' })
-          .redirect('http://localhost:3000/login')
+    res.status(301).redirect('http://localhost:3000/login')
   }
 }
