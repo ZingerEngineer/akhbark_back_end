@@ -71,8 +71,8 @@ export const validateResetPasswordToken = async (
 ) => {
   const { token } = req.body
   try {
-    await validateResetPasswordTokenFn(token)
-    res.status(200).json({ message: 'validation success' })
+    const payload = await validateResetPasswordTokenFn(token)
+    res.status(200).json({ message: 'validation success', payload: payload })
   } catch (error) {
     error instanceof Error
       ? res
