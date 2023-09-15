@@ -98,9 +98,12 @@ export const getUserToken = async (userEmail: string, tokenType: string) => {
   const user = await User.findOne({ email: userEmail })
   if (!user) throw new Error("User doesn't exist")
   if (!user.tokens) throw new Error("User doesn't have tokens")
-  const wantedToken = user.tokens.find(
-    (token) => token.type === tokenTypes[tokenType as keyof typeof tokenTypes]
-  )
-  if (!wantedToken) throw new Error("User doesn't have specified token.")
+  const wantedToken = user.tokens
+    .filter((token) => token !== null)
+    .find(
+      (token) => token.type === tokenTypes[tokenType as keyof typeof tokenTypes]
+    )
+  if (!wantedToken)
+    throw new Error("user doesn't have the specified token type")
   return wantedToken
 }

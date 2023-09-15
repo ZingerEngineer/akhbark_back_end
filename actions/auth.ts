@@ -86,8 +86,8 @@ export const validateResetPasswordTokenFn = async (token: string) => {
   if (!(payload instanceof Object)) throw new Error('invalid token data type')
   const { email } = payload
   const dbResetToken = await getUserToken(email, 'reset_password_token')
-  // if (!dbResetToken) throw new Error("User doesn't have specified token")
-  // if (dbResetToken.body !== token)
-  //   throw new Error('User is not authorized to this page.')
-  return email
+  if (!dbResetToken) throw new Error("user isn't authorized to reset password.")
+  if (dbResetToken.body !== token)
+    throw new Error('User is not authorized to this page.')
+  return true
 }
