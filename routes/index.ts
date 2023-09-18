@@ -9,6 +9,6 @@ const router = express.Router()
 router.use('/', publicRouter)
 //
 //private routes
-router.use('/', authGaurd, privateRouter)
+// router.use('/', authGaurd, privateRouter)
 
 export default router

@@ -85,9 +85,22 @@ export const validateResetPasswordTokenFn = async (token: string) => {
   if (!payload) throw new Error('empty token')
   if (!(payload instanceof Object)) throw new Error('invalid token data type')
   const { email } = payload
+  const { exp } = payload
+  if (!exp) throw new Error('token has no expiration time')
+  if (Date.now() >= exp * 1000) {
+    return false
+  }
   const dbResetToken = await getUserToken(email, 'reset_password_token')
   if (!dbResetToken) throw new Error("user isn't authorized to reset password.")
-  if (dbResetToken.body !== token)
-    throw new Error('User is not authorized to this page.')
-  return true
+  return dbResetToken.body !== token ? false : true
+}
+
+export const createNewPasswordFn = async (
+  password: string,
+  userEmail: string
+) => {
+  const user = await findOneUserByEmail(userEmail)
+  if (!user) throw new Error("user doesn't exist")
+  const encryptedPassword = await hash(password, 10)
+  return user.updateOne({ password: encryptedPassword })
 }

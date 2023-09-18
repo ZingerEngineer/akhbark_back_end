@@ -3,7 +3,8 @@ import {
   userLogin,
   userRegister,
   sendMail,
-  validateResetPasswordTokenFn
+  validateResetPasswordTokenFn,
+  createNewPasswordFn
 } from '../actions/auth'
 
 export const login = async (req: Request, res: Response) => {
@@ -54,14 +55,17 @@ export const forgotPassword = async (req: Request, res: Response) => {
 }
 
 export const createNewPassword = async (req: Request, res: Response) => {
-  const { password } = req.body
+  const { password, email } = req.body
   try {
-    res.status(200).json({ message: 'verification mail sent.' })
+    createNewPasswordFn(password, email)
+    res.status(200).json({ message: 'password changed successfully.' })
   } catch (error) {
     if (error instanceof Error) {
-      res.status(400).json({ message: error.message })
+      res
+        .status(400)
+        .json({ message: 'password change failed.', reason: error.message })
     }
-    res.status(400).json({ message: 'verification failed.' })
+    res.status(400).json({ message: 'password change failed.' })
   }
 }
 
@@ -72,10 +76,19 @@ export const validateResetPasswordToken = async (
   const { token } = req.body
   try {
     const isValidReset = await validateResetPasswordTokenFn(token)
-    res
-      .status(200)
-      .json({ message: 'validation success', isValidReset: isValidReset })
+    isValidReset
+      ? res
+          .status(200)
+          .json({ message: 'token validation success', isValidReset })
+      : res.status(200).json({
+          message: 'token validation failed',
+          isValidReset,
+          location: '/login'
+        })
   } catch (error) {
-    res.status(301).redirect('http://localhost:3000/login')
+    res.status(400).json({
+      message: 'error happened',
+      location: '/login'
+    })
   }
 }
