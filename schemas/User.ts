@@ -17,6 +17,4 @@ export const emailSchema = object({
 export const passwordSchema = object({
   email: string().min(8).max(15)
 })
-export const tokenSchema = object({
-  token: string()
-})
+export const tokenSchema = string()
