@@ -21,9 +21,11 @@ export const login = async (req: Request, res: Response) => {
     })
   } catch (error) {
     if (error instanceof Error) {
-      res.status(400).json({ message: 'login failed', reason: error.message })
+      return res
+        .status(400)
+        .json({ message: 'login failed', reason: error.message })
     }
-    res.status(400).json({ message: 'login failed' })
+    return res.status(400).json({ message: 'login failed' })
   }
 }
 
@@ -56,8 +58,23 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
 export const createNewPassword = async (req: Request, res: Response) => {
   const { password, email } = req.body
+  const { reset_password_token } = req.headers
+  if (!reset_password_token)
+    return res.status(400).json({
+      message: 'password change failed.',
+      reason: "user doesn't have reset token"
+    })
   try {
-    createNewPasswordFn(password, email)
+    if (typeof reset_password_token !== 'string')
+      return res.status(400).json({
+        message: 'password change failed.',
+        reason: 'invalid token type'
+      })
+    const { response } = await validateResetPasswordTokenFn(
+      reset_password_token,
+      false
+    )
+    if (response) createNewPasswordFn(password, email)
     res.status(200).json({ message: 'password changed successfully.' })
   } catch (error) {
     if (error instanceof Error) {
@@ -73,16 +90,28 @@ export const validateResetPasswordToken = async (
   req: Request,
   res: Response
 ) => {
-  const { token } = req.body
+  const { reset_password_token } = req.headers
+  if (!reset_password_token || typeof reset_password_token !== 'string') {
+    return res.status(400).json({
+      message: 'invalide token type',
+      location: '/login'
+    })
+  }
+
   try {
-    const isValidReset = await validateResetPasswordTokenFn(token)
-    isValidReset
-      ? res
-          .status(200)
-          .json({ message: 'token validation success', isValidReset })
+    const { response, data } = await validateResetPasswordTokenFn(
+      reset_password_token,
+      true
+    )
+    response
+      ? res.status(200).json({
+          message: 'token validation success',
+          isValidReset: response,
+          userEmail: data?.email
+        })
       : res.status(200).json({
           message: 'token validation failed',
-          isValidReset,
+          isValidReset: response,
           location: '/login'
         })
   } catch (error) {

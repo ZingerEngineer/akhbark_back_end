@@ -80,7 +80,10 @@ export const sendMail = async (email: string) => {
   }
 }
 
-export const validateResetPasswordTokenFn = async (token: string) => {
+export const validateResetPasswordTokenFn = async (
+  token: string,
+  returnData: boolean
+) => {
   const payload = decode(token)
   if (!payload) throw new Error('empty token')
   if (!(payload instanceof Object)) throw new Error('invalid token data type')
@@ -88,11 +91,18 @@ export const validateResetPasswordTokenFn = async (token: string) => {
   const { exp } = payload
   if (!exp) throw new Error('token has no expiration time')
   if (Date.now() >= exp * 1000) {
-    return false
+    return { response: false }
   }
   const dbResetToken = await getUserToken(email, 'reset_password_token')
   if (!dbResetToken) throw new Error("user isn't authorized to reset password.")
-  return dbResetToken.body !== token ? false : true
+  if (!returnData) {
+    return dbResetToken.body !== token
+      ? { response: false }
+      : { response: true }
+  }
+  return dbResetToken.body !== token
+    ? { response: false, data: { email } }
+    : { response: true, data: { email } }
 }
 
 export const createNewPasswordFn = async (
