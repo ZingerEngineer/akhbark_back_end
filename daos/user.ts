@@ -4,7 +4,8 @@ import { tokenTypes } from '../interfaces/global'
 
 export const createUser = async (data: IUser) => {
   const user = new User(data)
-  return await user.save()
+  await user.save()
+  return user
 }
 export const findOneUserDocumentByEmail = async (email: string) => {
   const user = await User.findOne({ email: email })
