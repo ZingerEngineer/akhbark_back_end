@@ -11,11 +11,10 @@ export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body
 
   try {
-    const { token, userData } = await userLogin(email, password)
-    res.status(200).json({
+    const { access_token, userData } = await userLogin(email, password)
+    res.setHeader('Authorization', access_token).status(200).json({
       message: 'login success',
       receivedData: {
-        token,
         userData
       }
     })
@@ -33,8 +32,16 @@ export const register = async (req: Request, res: Response) => {
   const { email, password, userName } = req.body
 
   try {
-    await userRegister(email, password, userName)
-    res.status(200).json({ message: 'register success.' })
+    const { newUser, access_token } = await userRegister(
+      email,
+      password,
+      userName
+    )
+    res.setHeader('Access-Control-Allow-Headers', 'authorization, content-type')
+    res
+      .setHeader('Authorization', access_token)
+      .status(200)
+      .json({ message: 'register success.', newUser })
   } catch (error) {
     if (error instanceof Error) {
       res.status(400).json({ message: error.message })

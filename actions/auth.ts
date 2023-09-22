@@ -9,7 +9,6 @@ import { compare } from 'bcrypt'
 import { sign, decode } from 'jsonwebtoken'
 import { hash } from 'bcrypt'
 import nodemailer from 'nodemailer'
-import { IToken, tokenTypes } from '../interfaces/global'
 interface tokenData {
   email: string
   dateCreated: string
@@ -33,12 +32,12 @@ export const userLogin = async (email: string, password: string) => {
   const passwordCheck = await compare(password, user.password)
   if (!passwordCheck) throw new Error("Password doesn't match")
   const { id, userName, role } = user
-  const payload = { id, userName, email, role }
+  const access_token_payload = { id, userName, email, role }
   const secret = process.env.PRIVATE_KEY
   if (!secret) throw new Error('Error occured.')
-  const token = sign(payload, secret)
+  const access_token = sign(access_token_payload, secret)
   const userData = user
-  return { userData, token }
+  return { userData, access_token }
 }
 
 export const userRegister = async (
@@ -51,11 +50,18 @@ export const userRegister = async (
   const userNameExists = await findOneUserByUserName(userName)
   if (userNameExists) throw new Error('User name already used.')
   const hashedPassword = await hash(password, 10)
-  createUser({
+
+  const newUser = await createUser({
     userName,
     email,
     password: hashedPassword
   })
+  const { id: newUserId, userName: newUserName, role: newUserRole } = newUser
+  const access_token_payload = { newUserId, newUserName, newUserRole }
+  const secret = process.env.PRIVATE_KEY
+  if (!secret) throw new Error('Error occured.')
+  const access_token = sign(access_token_payload, secret)
+  return { newUser, access_token }
 }
 
 export const sendMail = async (email: string) => {
