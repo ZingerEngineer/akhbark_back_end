@@ -3,7 +3,9 @@ import {
   createUser,
   findOneUserByUserName,
   createUserResetPasswordToken,
-  getUserToken
+  createUserAccessToken,
+  getUserToken,
+  updateUserTokensArray
 } from '../daos/user'
 import { compare } from 'bcrypt'
 import { sign, decode } from 'jsonwebtoken'
@@ -28,16 +30,16 @@ const transporter = nodemailer.createTransport({
 
 export const userLogin = async (email: string, password: string) => {
   const user = await findOneUserByEmail(email)
-  if (!user) throw new Error('User not found.')
+  if (!user) throw new Error("User doesn't exist.")
   const passwordCheck = await compare(password, user.password)
   if (!passwordCheck) throw new Error("Password doesn't match")
-  const { id, userName, role } = user
-  const access_token_payload = { id, userName, email, role }
+  const { id, userName, role, avatar } = user
+  const access_token_payload = { id, userName, email, role, avatar }
   const secret = process.env.PRIVATE_KEY
   if (!secret) throw new Error('Error occured.')
-  const access_token = sign(access_token_payload, secret)
-  const userData = user
-  return { userData, access_token }
+  const access_token_body = sign(access_token_payload, secret)
+  await createUserAccessToken(access_token_body, email)
+  return { userData: user, access_token_body }
 }
 
 export const userRegister = async (
@@ -56,12 +58,25 @@ export const userRegister = async (
     email,
     password: hashedPassword
   })
-  const { id: newUserId, userName: newUserName, role: newUserRole } = newUser
-  const access_token_payload = { newUserId, newUserName, newUserRole }
+  const {
+    id: newUserId,
+    userName: newUserName,
+    role: newUserRole,
+    email: newUserEmail,
+    avatar: newUserAvata
+  } = newUser
+  const access_token_payload = {
+    newUserId,
+    newUserName,
+    newUserRole,
+    newUserAvata,
+    newUserEmail
+  }
   const secret = process.env.PRIVATE_KEY
   if (!secret) throw new Error('Error occured.')
-  const access_token = sign(access_token_payload, secret)
-  return { newUser, access_token }
+  const access_token_body = sign(access_token_payload, secret)
+  await createUserAccessToken(access_token_body, email)
+  return { newUser, access_token_body }
 }
 
 export const sendMail = async (email: string) => {
@@ -119,4 +134,28 @@ export const createNewPasswordFn = async (
   if (!user) throw new Error("user doesn't exist")
   const encryptedPassword = await hash(password, 10)
   return user.updateOne({ password: encryptedPassword })
+}
+
+export const deleteResetPasswordTokenFn = async (toBeDeletedToken: string) => {
+  const payload = decode(toBeDeletedToken)
+  if (!payload) throw new Error('empty token')
+  if (!(payload instanceof Object)) throw new Error('invalid token data type')
+  const { email } = payload
+  await updateUserTokensArray(email, undefined, null)
+}
+
+export const deleteAccessTokenFn = async (toBeDeletedToken: string) => {
+  const payload = decode(toBeDeletedToken)
+  if (!payload) throw new Error('empty token')
+  if (!(payload instanceof Object)) throw new Error('invalid token data type')
+  const { email } = payload
+  await updateUserTokensArray(email, null, undefined)
+}
+
+export const validateAccessTokenFn = async (access_token: string) => {
+  const payload = decode(access_token)
+  if (!payload) throw new Error('empty token')
+  if (!(payload instanceof Object)) throw new Error('invalid token data type')
+  const { id, userName, email, role, avatar } = payload
+  return { userData: { id, userName, email, role, avatar } }
 }

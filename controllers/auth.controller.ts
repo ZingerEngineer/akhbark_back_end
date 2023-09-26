@@ -4,15 +4,18 @@ import {
   userRegister,
   sendMail,
   validateResetPasswordTokenFn,
-  createNewPasswordFn
+  createNewPasswordFn,
+  deleteResetPasswordTokenFn,
+  deleteAccessTokenFn,
+  validateAccessTokenFn
 } from '../actions/auth'
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body
 
   try {
-    const { access_token, userData } = await userLogin(email, password)
-    res.setHeader('Authorization', access_token).status(200).json({
+    const { access_token_body, userData } = await userLogin(email, password)
+    res.setHeader('Authorization', access_token_body).status(200).json({
       message: 'login success',
       receivedData: {
         userData
@@ -32,14 +35,13 @@ export const register = async (req: Request, res: Response) => {
   const { email, password, userName } = req.body
 
   try {
-    const { newUser, access_token } = await userRegister(
+    const { newUser, access_token_body } = await userRegister(
       email,
       password,
       userName
     )
-    res.setHeader('Access-Control-Allow-Headers', 'authorization, content-type')
     res
-      .setHeader('Authorization', access_token)
+      .setHeader('Authorization', access_token_body)
       .status(200)
       .json({ message: 'register success.', newUser })
   } catch (error) {
@@ -126,5 +128,78 @@ export const validateResetPasswordToken = async (
       message: 'error happened',
       location: '/login'
     })
+  }
+}
+
+export const validateAccessToken = async (req: Request, res: Response) => {
+  const { authorization } = req.headers
+  if (!authorization || typeof authorization !== 'string')
+    throw new Error('invalid access token.')
+  try {
+    const { userData } = await validateAccessTokenFn(authorization)
+    res.status(200).json({
+      message: 'token validation success',
+      userData
+    })
+  } catch (error) {
+    error instanceof Error
+      ? res.status(400).json({
+          message: 'Error happened.',
+          reason: error.message
+        })
+      : res.status(400).json({
+          message: 'Error happened.'
+        })
+  }
+}
+
+export const deleteResetPasswordToken = async (req: Request, res: Response) => {
+  const { reset_password_token } = req.headers
+  if (!reset_password_token || typeof reset_password_token !== 'string') {
+    return res.status(400).json({
+      message: 'invalide token type',
+      location: '/login'
+    })
+  }
+
+  try {
+    await deleteResetPasswordTokenFn(reset_password_token)
+    res.status(200).json({
+      message: 'token deleted successfully'
+    })
+  } catch (error) {
+    error instanceof Error
+      ? res.status(400).json({
+          message: 'error happened',
+          reason: error.message
+        })
+      : res.status(400).json({
+          message: 'error happened'
+        })
+  }
+}
+
+export const deleteAccessToken = async (req: Request, res: Response) => {
+  const { access_token } = req.headers
+  if (!access_token || typeof access_token !== 'string') {
+    return res.status(400).json({
+      message: 'invalide token type'
+    })
+  }
+
+  try {
+    await deleteAccessTokenFn(access_token)
+    res.status(200).json({
+      message: 'token deleted successfully'
+    })
+  } catch (error) {
+    error instanceof Error
+      ? res.status(400).json({
+          message: 'error happened',
+          reason: error.message
+        })
+      : res.status(400).json({
+          message: 'error happened'
+        })
   }
 }
