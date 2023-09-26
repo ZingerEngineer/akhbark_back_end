@@ -4,7 +4,9 @@ import {
   register,
   forgotPassword,
   createNewPassword,
-  validateResetPasswordToken
+  validateResetPasswordToken,
+  deleteResetPasswordToken,
+  validateAccessToken
 } from '../controllers/auth.controller'
 import {
   userLoginSchema,
@@ -16,7 +18,6 @@ import {
 import {
   validate,
   validateResetPasswordData,
-  validateString,
   validateTokenString
 } from '../middlewares/validate'
 const authRouter = express.Router()
@@ -31,8 +32,18 @@ authRouter.post(
 )
 authRouter.post(
   '/validate-reset-password-token',
-  validateTokenString(tokenSchema),
+  validateTokenString(tokenSchema, 'reset_password_token'),
   validateResetPasswordToken
+)
+authRouter.post(
+  '/validate-access-token',
+  validateTokenString(tokenSchema, 'authorization'),
+  validateAccessToken
+)
+authRouter.delete(
+  '/delete-reset-password-token',
+  validateTokenString(tokenSchema, 'reset_password_token'),
+  deleteResetPasswordToken
 )
 
 export { authRouter }
