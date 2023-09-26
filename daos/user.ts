@@ -1,6 +1,6 @@
 import { IUser } from '../interfaces/User'
 import { User } from '../models/User'
-import { tokenTypes } from '../interfaces/global'
+import { IToken, tokenTypes } from '../interfaces/global'
 
 export const createUser = async (data: IUser) => {
   const user = new User(data)
@@ -92,7 +92,27 @@ export const createUserResetPasswordToken = async (
     body: tokenBody,
     type: tokenTypes.reset_password_token
   }
-  return await user.save()
+  return user.save()
+}
+
+export const createUserAccessToken = async (
+  tokenBody: string,
+  userEmail: string
+) => {
+  const user = await User.findOne({ email: userEmail })
+  if (!user) throw new Error("user doesn't exist")
+  if (!user.tokens) throw new Error('Empty tokens array')
+  user.tokens[tokenTypes.access_token] = {
+    timeCreated: new Date(Date.now()).toString(),
+    owner: {
+      email: user.email,
+      userName: user.userName,
+      userId: user._id.toString()
+    },
+    body: tokenBody,
+    type: tokenTypes.access_token
+  }
+  return user.save()
 }
 
 export const getUserToken = async (userEmail: string, tokenType: string) => {
@@ -104,7 +124,34 @@ export const getUserToken = async (userEmail: string, tokenType: string) => {
     .find(
       (token) => token.type === tokenTypes[tokenType as keyof typeof tokenTypes]
     )
-  if (!wantedToken)
-    throw new Error("user doesn't have the specified token type")
+  if (!wantedToken) return null
   return wantedToken
+}
+
+export const updateUserTokensArray = async (
+  userEmail: string,
+  newAccessToken?: IToken | null,
+  newResetPasswordToken?: IToken | null
+) => {
+  let access_token = null
+  let reset_password_token = null
+  const user = await findOneUserByEmail(userEmail)
+  if (!user) throw new Error("User doesn't exist")
+  if (!newAccessToken) {
+    access_token = await getUserToken(userEmail, 'access_token')
+    if (!access_token) access_token = null
+  } else {
+    access_token = newAccessToken
+  }
+  if (newResetPasswordToken === undefined) {
+    let reset_password_token = await getUserToken(
+      userEmail,
+      'reset_password_token'
+    )
+    if (!reset_password_token) reset_password_token = null
+  } else {
+    reset_password_token = newResetPasswordToken
+  }
+  const newUserTokensArray = [access_token, reset_password_token]
+  return user.updateOne({ tokens: newUserTokensArray })
 }
