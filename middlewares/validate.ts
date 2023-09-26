@@ -57,10 +57,11 @@ export const validateString =
   }
 
 export const validateTokenString =
-  <T extends Maybe<string>>(schema: StringSchema<T>) =>
+  <T extends Maybe<string>>(schema: StringSchema<T>, tokenType: string) =>
   (req: Request, res: Response, next: NextFunction) => {
-    const { token } = req.headers
-    if (!token || typeof token !== 'string') throw new Error('Invalid token')
+    const token = req.headers[tokenType]
+    if (typeof token !== 'string') throw new Error('nonstring')
+    if (!token) throw new Error('undefined token')
 
     if (validateTokenStringFn(schema, token)) return next()
 
