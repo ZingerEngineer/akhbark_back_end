@@ -2,7 +2,7 @@ import { IPost } from './Post'
 import { IUser } from './User'
 
 export enum tokenTypes {
-  authorization_token,
+  access_token,
   reset_password_token
 }
 interface IToken {
