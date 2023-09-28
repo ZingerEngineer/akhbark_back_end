@@ -158,48 +158,55 @@ export const deleteResetPasswordToken = async (req: Request, res: Response) => {
   if (!reset_password_token || typeof reset_password_token !== 'string') {
     return res.status(400).json({
       message: 'invalide token type',
-      location: '/login'
+      isDeleted: false
     })
   }
 
   try {
     await deleteResetPasswordTokenFn(reset_password_token)
     res.status(200).json({
-      message: 'token deleted successfully'
+      message: 'token deleted successfully',
+      isDeleted: true
     })
   } catch (error) {
     error instanceof Error
       ? res.status(400).json({
           message: 'error happened',
-          reason: error.message
+          reason: error.message,
+          isDeleted: false
         })
       : res.status(400).json({
-          message: 'error happened'
+          message: 'error happened',
+          isDeleted: false
         })
   }
 }
 
 export const deleteAccessToken = async (req: Request, res: Response) => {
-  const { access_token } = req.headers
-  if (!access_token || typeof access_token !== 'string') {
+  const { authorization } = req.headers
+  if (!authorization || typeof authorization !== 'string') {
     return res.status(400).json({
-      message: 'invalide token type'
+      message: 'invalide token type',
+      isDeleted: false
     })
   }
 
   try {
-    await deleteAccessTokenFn(access_token)
+    await deleteAccessTokenFn(authorization)
     res.status(200).json({
-      message: 'token deleted successfully'
+      message: 'token deleted successfully',
+      isDeleted: true
     })
   } catch (error) {
     error instanceof Error
       ? res.status(400).json({
           message: 'error happened',
-          reason: error.message
+          reason: error.message,
+          isDeleted: false
         })
       : res.status(400).json({
-          message: 'error happened'
+          message: 'error happened',
+          isDeleted: false
         })
   }
 }
