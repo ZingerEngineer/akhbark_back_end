@@ -32,8 +32,8 @@ interface IUser {
   userName?: string
   email: string
   password: string
-  avatar?: string
-  coverImage?: string
+  avatar?: string | null
+  coverImage?: string | null
   followers?: {
     totalNumber: number
     followersArray: IFollower[]

@@ -28,8 +28,8 @@ const userSchema = new mongoose.Schema<IUser>({
   userName: { type: String, default: 'guest' },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  avatar: { type: String, default: 'default_user_url' },
-  coverImage: { type: String, default: '', required: false },
+  avatar: { type: String, default: null },
+  coverImage: { type: String, default: null, required: false },
   followers: {
     type: Object,
     totalNumber: { type: Number, default: 0 },
