@@ -6,7 +6,8 @@ import {
   createNewPassword,
   validateResetPasswordToken,
   deleteResetPasswordToken,
-  validateAccessToken
+  validateAccessToken,
+  deleteAccessToken
 } from '../controllers/auth.controller'
 import {
   userLoginSchema,
@@ -44,6 +45,12 @@ authRouter.delete(
   '/delete-reset-password-token',
   validateTokenString(tokenSchema, 'reset_password_token'),
   deleteResetPasswordToken
+)
+
+authRouter.delete(
+  '/logout',
+  validateTokenString(tokenSchema, 'authorization'),
+  deleteAccessToken
 )
 
 export { authRouter }
