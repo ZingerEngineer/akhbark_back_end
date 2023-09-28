@@ -137,9 +137,11 @@ export const updateUserTokensArray = async (
   let reset_password_token = null
   const user = await findOneUserByEmail(userEmail)
   if (!user) throw new Error("User doesn't exist")
-  if (!newAccessToken) {
+  if (newAccessToken === undefined) {
     access_token = await getUserToken(userEmail, 'access_token')
     if (!access_token) access_token = null
+  } else if (newAccessToken === null) {
+    access_token = null
   } else {
     access_token = newAccessToken
   }
@@ -149,6 +151,8 @@ export const updateUserTokensArray = async (
       'reset_password_token'
     )
     if (!reset_password_token) reset_password_token = null
+  } else if (newResetPasswordToken === null) {
+    reset_password_token = null
   } else {
     reset_password_token = newResetPasswordToken
   }
