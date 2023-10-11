@@ -134,10 +134,12 @@ export const validateAccessToken = async (req: Request, res: Response) => {
   if (!authorization || typeof authorization !== 'string')
     throw new Error('invalid access token.')
   try {
-    const { userData } = await validateAccessTokenFn(authorization)
+    const { id, userName, email, role, avatar } = await validateAccessTokenFn(
+      authorization
+    )
     res.status(200).json({
       message: 'token validation success',
-      userData
+      userData: { id, userName, email, role, avatar }
     })
   } catch (error) {
     error instanceof Error

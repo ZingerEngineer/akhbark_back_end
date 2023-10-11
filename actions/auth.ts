@@ -25,8 +25,8 @@ const transporter = nodemailer.createTransport({
   tls: { rejectUnauthorized: false }
 })
 
-export const userLogin = async (email: string, password: string) => {
-  const user = await findOneUserByEmail(email)
+export const userLogin = async (inputEmail: string, password: string) => {
+  const user = await findOneUserByEmail(inputEmail)
 
   if (!user) throw new Error("User doesn't exist.")
 
@@ -34,8 +34,23 @@ export const userLogin = async (email: string, password: string) => {
 
   if (!passwordCheck) throw new Error("Password doesn't match")
 
-  const { id, userName, role, avatar } = user
-  const access_token_payload = { id, userName, email, role, avatar }
+  const {
+    id,
+    timeCreated,
+    role,
+    userName,
+    email,
+    avatar,
+    coverImage,
+    followers,
+    posts,
+    recentActivity,
+    reports,
+    comments,
+    reactions,
+    settings
+  } = user
+  const access_token_payload = { id, userName, email, role }
   const secret = process.env.PRIVATE_KEY
 
   if (!secret) throw new Error('Error occured.')
@@ -44,38 +59,50 @@ export const userLogin = async (email: string, password: string) => {
 
   await createUserAccessToken(access_token_body, email)
 
-  return { userData: user, access_token_body }
+  return {
+    userData: {
+      id,
+      role,
+      email,
+      userName,
+      timeCreated,
+      avatar,
+      coverImage,
+      followers,
+      posts,
+      recentActivity,
+      reports,
+      comments,
+      reactions,
+      settings
+    },
+    access_token_body
+  }
 }
 
 export const userRegister = async (
-  email: string,
-  password: string,
-  userName: string
+  inputEmail: string,
+  inputPassword: string,
+  inputUserName: string
 ) => {
-  const userEmailExists = await findOneUserByEmail(email)
+  const userEmailExists = await findOneUserByEmail(inputEmail)
   if (userEmailExists) throw new Error('Email already exists.')
-  const userNameExists = await findOneUserByUserName(userName)
+  const userNameExists = await findOneUserByUserName(inputUserName)
   if (userNameExists) throw new Error('User name already used.')
-  const hashedPassword = await hash(password, 10)
+  const hashedPassword = await hash(inputPassword, 10)
 
   const newUser = await createUser({
-    userName,
-    email,
+    userName: inputUserName,
+    email: inputEmail,
     password: hashedPassword
   })
-  const {
-    id: newUserId,
-    userName: newUserName,
-    role: newUserRole,
-    email: newUserEmail,
-    avatar: newUserAvata
-  } = newUser
+  const { id, userName, role, email, avatar } = newUser
   const access_token_payload = {
-    newUserId,
-    newUserName,
-    newUserRole,
-    newUserAvata,
-    newUserEmail
+    id,
+    userName,
+    role,
+    avatar,
+    email
   }
   const secret = process.env.PRIVATE_KEY
   if (!secret) throw new Error('Error occured.')
@@ -162,5 +189,5 @@ export const validateAccessTokenFn = async (access_token: string) => {
   if (!payload) throw new Error('empty token')
   if (!(payload instanceof Object)) throw new Error('invalid token data type')
   const { id, userName, email, role, avatar } = payload
-  return { userData: { id, userName, email, role, avatar } }
+  return { id, userName, email, role, avatar }
 }
