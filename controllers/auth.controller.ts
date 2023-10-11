@@ -16,10 +16,8 @@ export const login = async (req: Request, res: Response) => {
   try {
     const { access_token_body, userData } = await userLogin(email, password)
     res.setHeader('Authorization', access_token_body).status(200).json({
-      message: 'login success',
-      receivedData: {
-        userData
-      }
+      message: 'success',
+      userData
     })
   } catch (error) {
     if (error instanceof Error) {

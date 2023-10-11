@@ -11,10 +11,7 @@ import { compare } from 'bcrypt'
 import { sign, decode } from 'jsonwebtoken'
 import { hash } from 'bcrypt'
 import nodemailer from 'nodemailer'
-interface tokenData {
-  email: string
-  dateCreated: string
-}
+
 const forgotURL = 'http://localhost:3000/create-new-password'
 const forgetKey = process.env.PRIVATE_FORGET_KEY
 const transporter = nodemailer.createTransport({
@@ -30,15 +27,23 @@ const transporter = nodemailer.createTransport({
 
 export const userLogin = async (email: string, password: string) => {
   const user = await findOneUserByEmail(email)
+
   if (!user) throw new Error("User doesn't exist.")
+
   const passwordCheck = await compare(password, user.password)
+
   if (!passwordCheck) throw new Error("Password doesn't match")
+
   const { id, userName, role, avatar } = user
   const access_token_payload = { id, userName, email, role, avatar }
   const secret = process.env.PRIVATE_KEY
+
   if (!secret) throw new Error('Error occured.')
+
   const access_token_body = sign(access_token_payload, secret)
+
   await createUserAccessToken(access_token_body, email)
+
   return { userData: user, access_token_body }
 }
 
