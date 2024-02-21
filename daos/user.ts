@@ -194,8 +194,7 @@ export const getGoogleUserInfo = async ({
       {
         headers: {
           Authorization: `Bearer ${access_token}`,
-          'Content-Type': 'application/json',
-          Accept: 
+          'Content-Type': 'application/json'
         }
       }
     )
