@@ -7,7 +7,8 @@ import {
   validateResetPasswordToken,
   deleteResetPasswordToken,
   validateAccessToken,
-  deleteAccessToken
+  deleteAccessToken,
+  googleOAuthHandler
 } from '../controllers/auth.controller'
 import {
   userLoginSchema,
@@ -47,6 +48,7 @@ authRouter.delete(
   deleteResetPasswordToken
 )
 
+authRouter.get('/sessions/oauth/google', googleOAuthHandler)
 authRouter.delete(
   '/logout',
   validateTokenString(tokenSchema, 'authorization'),

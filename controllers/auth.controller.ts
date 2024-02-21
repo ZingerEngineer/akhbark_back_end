@@ -9,6 +9,11 @@ import {
   deleteAccessTokenFn,
   validateAccessTokenFn
 } from '../actions/auth'
+import {
+  getGoogleOAuthTokens,
+  getGoogleUserInfo,
+  getGoogleUserProfile
+} from '../daos/user'
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body
@@ -209,4 +214,23 @@ export const deleteAccessToken = async (req: Request, res: Response) => {
           isDeleted: false
         })
   }
+}
+
+export const googleOAuthHandler = async (req: Request, res: Response) => {
+  const code = req.query.code as string
+  try {
+    const { id_token, access_token } = await getGoogleOAuthTokens({ code })
+    console.log(access_token)
+    const userData = await getGoogleUserInfo({ access_token })
+    console.log(userData)
+  } catch (error) {
+    console.log(error)
+  }
+
+  // Get code from the querry string.
+  // Get the id and access token within the code.
+  // Then we get the user from the token.
+  // Upsert the user and create a session.
+  // Create access and refresh token.
+  // Set a cookie and redirect back to client.
 }

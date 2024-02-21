@@ -1,3 +1,5 @@
+import axios from 'axios'
+import jwt from 'jsonwebtoken'
 import { IUser } from '../interfaces/User'
 import { User } from '../models/User'
 import { IToken, tokenTypes } from '../interfaces/global'
@@ -161,4 +163,61 @@ export const updateUserTokensArray = async (
   }
   const newUserTokensArray = [access_token, reset_password_token]
   return user.updateOne({ tokens: newUserTokensArray })
+}
+
+export const getGoogleOAuthTokens = async ({ code }: { code: string }) => {
+  const url = 'https:/oauth2.googleapis.com/token'
+  const values = {
+    code: code,
+    client_id: process.env.CLIENT_ID as string,
+    client_secret: process.env.CLIENT_SECRET as string,
+    redirect_uri: process.env.GOOGLE_OAUTH_REDIRECT_URL as string,
+    grant_type: 'authorization_code'
+  }
+  try {
+    const params = new URLSearchParams(values)
+    const res = await axios.post(url, params)
+    return res.data
+  } catch (error) {
+    console.log(error, 'Failed to fetch Google OAuth')
+  }
+}
+
+export const getGoogleUserInfo = async ({
+  access_token
+}: {
+  access_token: string
+}) => {
+  try {
+    const userData = await axios.get(
+      'https://www.googleapis.com/oauth2/v1/userinfo',
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          'Content-Type': 'application/json',
+          Accept: 
+        }
+      }
+    )
+    return userData
+  } catch (error) {
+    console.log(error, 'Failed to fetch google user info')
+  }
+}
+
+export const getGoogleUserProfile = async ({
+  access_token
+}: {
+  access_token: string
+}) => {
+  try {
+    const res = await axios.get('https://www.googleapis.com/auth/userprofile', {
+      headers: {
+        Authorization: `Bearer ${access_token}`
+      }
+    })
+    return res.data
+  } catch (error) {
+    console.log(error, 'Failed to fetch google user info')
+  }
 }
